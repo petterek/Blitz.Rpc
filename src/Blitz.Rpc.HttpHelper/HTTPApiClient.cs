@@ -1,0 +1,73 @@
+using Blitz.Rpc.Client.BaseClasses;
+using Blitz.Rpc.Shared;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+namespace Blitz.Rpc.HttpHelper
+{
+    /// <summary>
+    /// This is the default implementation for a ApiClient, the serializer is replaceable.
+    /// The serializer must ofcourse match the serializer in the other end.
+    /// It is based on HTTP(S) and works with det default implementation of Blitz.Rpc.Server
+    /// </summary>
+    public class HttpApiClient : IApiClient
+    {
+        private readonly HttpClient httpClient;
+        private readonly ISerializer serializer;
+
+        public HttpApiClient(HttpClient httpClient, ISerializer serializer)
+        {
+            this.httpClient = httpClient;
+            this.serializer = serializer;
+        }
+
+        public async Task<object> Invoke(RpcMethodInfo toCall, object[] param)
+        {
+            //This format is recognized by the default implementation of the server.
+            //The base url for the request is expected to be set on the HttpClient
+            var requestUri = $"{toCall.ServiceId}.{toCall.Name}-{toCall.ParamType}";
+
+            var theHttpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri);
+
+            var outstream = new System.IO.MemoryStream();
+
+            switch (param.Length)
+            {
+                case 0:
+                    break;
+
+                case 1:
+                    serializer.ToStream(outstream, param[0]);
+                    break;
+
+                default:
+                    serializer.ToStream(outstream, param);
+                    break;
+            }
+
+            outstream.Position = 0;
+            theHttpRequest.Content = new StreamContent(outstream);
+
+            theHttpRequest.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+
+            var response = await httpClient.SendAsync(theHttpRequest);
+
+            if (response.IsSuccessStatusCode)
+            {
+                if (toCall.ReturnType == typeof(void)) return null;
+                var ret = serializer.FromStream(await response.Content.ReadAsStreamAsync(), toCall.ReturnType);
+
+                return ret;
+            }
+            else if ((int)response.StatusCode >= 500)
+            {
+                var remoteExceptionInfo = serializer.FromStream(await response.Content.ReadAsStreamAsync(), typeof(RemoteExceptionInfo));
+                throw new WebRpcCallFailedException((RemoteExceptionInfo)remoteExceptionInfo);
+            }
+            else
+            {
+                throw new HttpRequestException($"{response.StatusCode} {response.Content.ReadAsStringAsync().Result}");
+            }
+        }
+    }
+}
