@@ -1,11 +1,12 @@
-using Blitz.Rpc.HttpHelper.UrlProvider;
+using Blitz.Rpc.Client.Helper.UrlProvider;
 using System.Net.Http;
 
-namespace Blitz.Rpc.HttpHelper
+namespace Blitz.Rpc.Client.Helper
 {
-    public class IntegratedHttpJsonApiClientConfig
+    public class IntegratedHttpApiClientConfig
     {
         public IUrlProvider urlProvider;
         public HttpMessageHandler LastHandler;
+
     }
 }

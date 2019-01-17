@@ -1,19 +1,20 @@
 using Blitz.Rpc.Client.BaseClasses;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Blitz.Rpc.HttpHelper
+namespace Blitz.Rpc.Client.Helper
 {
     public class IntegratedHttpJsonApiClient : IApiClient
     {
         public List<DelegatingHandler> HttpHandlers = new List<DelegatingHandler>();
-        private readonly IntegratedHttpJsonApiClientConfig config;
-        private readonly ISerializer serializer;
+        private readonly IntegratedHttpApiClientConfig config;
+        readonly IList<ISerializer> serializers;
 
-        public IntegratedHttpJsonApiClient(IntegratedHttpJsonApiClientConfig config, ISerializer serializer)
+        public IntegratedHttpJsonApiClient(IntegratedHttpApiClientConfig config, IEnumerable<ISerializer> serializers)
         {
-            this.serializer = serializer;
+            this.serializers = serializers.ToList();
             this.config = config;
         }
 
@@ -30,7 +31,7 @@ namespace Blitz.Rpc.HttpHelper
             {
                 HttpClient httpClient = new HttpClient(Build(), false);
                 httpClient.BaseAddress = new System.Uri(config.urlProvider.GetEndpoint(toCall));
-                _getClient = new HttpApiClient(httpClient, serializer);
+                _getClient = new HttpApiClient(httpClient,serializers);
             }
             return _getClient;
         }

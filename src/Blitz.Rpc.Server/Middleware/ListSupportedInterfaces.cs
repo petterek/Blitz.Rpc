@@ -1,19 +1,19 @@
-using Blitz.Rpc.Server.Internals;
+using Blitz.Rpc.HttpServer.Internals;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Blitz.Rpc.Server.Middleware
+namespace Blitz.Rpc.HttpServer.Middleware
 {
     public class ListSupportedInterfaces
     {
         private readonly RequestDelegate _next;
-        private readonly ServerConfig _container;
+        private readonly ServerInfo _container;
         private readonly ApplicationState _appState;
 
-        public ListSupportedInterfaces(RequestDelegate next, ServerConfig container)
+        public ListSupportedInterfaces(RequestDelegate next, ServerInfo container)
         {
             _next = next;
             _container = container;
@@ -23,24 +23,24 @@ namespace Blitz.Rpc.Server.Middleware
         public async Task Invoke(HttpContext context)
         {
             string v = context.Request.Path.ToUriComponent();
-            var Identifier = v.Replace(_container.BaseUrl, "");
+            var Identifier = v.Replace(_container.BasePath, "");
 
             string bodyContent = null;
 
             if (Identifier == "")
             {
                 var filter = context.Request.Query["filter"].FirstOrDefault();
-                bodyContent = $"<h1>{_container.Info.DomainName}</h1><h2></h2>    <h2>Supported interfaces:</h2>";
+                bodyContent = $"<h1>{_container.DomainName}</h1><h2></h2>    <h2>Supported interfaces:</h2>";
                 if (!string.IsNullOrEmpty(filter))
                 {
                     bodyContent += $"<h3>Filtered by: <i>{filter}</i></h3>";
                 }
                 bodyContent += "<ul>";
-                _container.AllRegistered().ToList().
+                _container.Services.ToList().
                     ForEach(e => e.Interface.GetMethods().ToList().
                     ForEach(m =>
                     {
-                        var interfaceAndMethodName = $"{_container.BaseUrl}{e.Interface.FullName}.{m.Name}";
+                        var interfaceAndMethodName = $"{_container.BasePath}{e.Interface.FullName}.{m.Name}";
                         if (!string.IsNullOrEmpty(filter) && !interfaceAndMethodName.ToLower().Contains(filter.ToLower()))
                         {
                             return;
@@ -53,7 +53,17 @@ namespace Blitz.Rpc.Server.Middleware
             }
             else
             {
-                var info = _appState.GetHandler(Identifier);
+                HandlerInfo info = null;
+                try
+                {
+                    
+                    info = _appState.GetHandler(Identifier);
+                }
+                catch 
+                {
+                    return;
+                }
+                
                 var stream = new System.IO.MemoryStream();
 
                 List<(string name, string typeName)> propertiesAndFields = new List<(string name, string typeName)>();
@@ -65,7 +75,7 @@ namespace Blitz.Rpc.Server.Middleware
                     propertiesAndFields.AddRange(info.ParamType.GetFields().Select(item => (item.Name, item.FieldType.Name)).ToList());
                     propertiesAndFields.AddRange(info.ParamType.GetProperties().Select(item => (item.Name, item.PropertyType.Name)));
                     var paramInstance = Activator.CreateInstance(info.ParamType);
-                    _container.Serializer.ToStream(stream, paramInstance);
+                    _container.Serializers.First().ToStream(stream, paramInstance);
                     stream.Position = 0;
                     paramInstanceSerialized = new System.IO.StreamReader(stream).ReadToEnd();
                     paramName = info.ParamType.FullName;

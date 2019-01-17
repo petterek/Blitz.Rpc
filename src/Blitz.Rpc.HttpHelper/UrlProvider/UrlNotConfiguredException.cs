@@ -2,7 +2,7 @@ using Blitz.Rpc.Client.BaseClasses;
 using System;
 using System.Runtime.Serialization;
 
-namespace Blitz.Rpc.HttpHelper.UrlProvider
+namespace Blitz.Rpc.Client.Helper.UrlProvider
 {
     [Serializable]
     internal class UrlNotConfiguredException : Exception

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Blitz.Rpc.HttpHelper.UrlProvider
+namespace Blitz.Rpc.Client.Helper.UrlProvider
 {
     /// <summary>
     /// Rudimentary implementation of URL provider..

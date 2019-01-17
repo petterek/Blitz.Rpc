@@ -1,21 +1,22 @@
-using Blitz.Rpc.Server.Exceptions;
-using Blitz.Rpc.Server.Internals;
+using Blitz.Rpc.HttpServer.Exceptions;
+using Blitz.Rpc.HttpServer.Internals;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace Blitz.Rpc.Server.Middleware
+namespace Blitz.Rpc.HttpServer.Middleware
 {
     public class WebRpcMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ServerConfig _container;
+        private readonly ServerInfo _container;
 
         private ApplicationState AppState;
         private readonly ILogger<WebRpcMiddleware> logger;
 
-        public WebRpcMiddleware(RequestDelegate next, ServerConfig container, ILogger<WebRpcMiddleware> logger)
+        public WebRpcMiddleware(RequestDelegate next, ServerInfo container, ILogger<WebRpcMiddleware> logger)
         {
             this.logger = logger;
             _next = next;
@@ -25,7 +26,7 @@ namespace Blitz.Rpc.Server.Middleware
 
         public async Task Invoke(HttpContext context, IServiceProvider serviceProvider)
         {
-            string Identifier = context.Request.Path.ToUriComponent().Replace(_container.BaseUrl, "");
+            string Identifier = context.Request.Path.ToUriComponent().Replace(_container.BasePath, "");
 
             if (Identifier == "" | context.Request.Method == "GET")
             {
@@ -50,7 +51,7 @@ namespace Blitz.Rpc.Server.Middleware
             object param = null;
             if (hInfo.ParamType != null)
             {
-                param = hInfo.CreateParam(context.Request.Body);
+                param = hInfo.CreateParam(context.Request.Body, hInfo.ParamType);
                 if (param == null)
                 {
                     throw new ArgumentOutOfRangeException(hInfo.ParamType.Name, $"Not able to create param of '{hInfo.ParamType.Name}' from string: '{context.Request.Body}'");
@@ -61,9 +62,12 @@ namespace Blitz.Rpc.Server.Middleware
             var data = hInfo.Execute(param, serviceProvider);
             logger.LogTrace("End handler {handler}", hInfo.HandlerType.FullName);
 
-            context.Response.ContentType = AppState.Container.ResponseType;
+            var outStream = AppState.Container.Serializers.First();
+
+
+            context.Response.ContentType = outStream.ProduceMimeType;
             context.Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
-            AppState.Container.Serializer.ToStream(context.Response.Body, data);
+            outStream.ToStream(context.Response.Body, data);
         }
     }
 }

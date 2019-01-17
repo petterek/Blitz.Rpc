@@ -1,8 +1,9 @@
-using Blitz.Rpc.HttpHelper;
-using Blitz.Rpc.HttpHelper.Extensions;
+using Blitz.Rpc.Client.Helper;
+using Blitz.Rpc.Client.Helper.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Tests.Contract;
 
@@ -35,6 +36,10 @@ namespace Tests
 
         public class Serializer : ISerializer
         {
+            public string ProduceMimeType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+            public List<string> AcceptMimeType => throw new NotImplementedException();
+
             public object FromStream(Stream stream, Type returnType)
             {
                 throw new NotImplementedException();

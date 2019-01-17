@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Blitz.Rpc.HttpHelper.HttpHandlers
+namespace Blitz.Rpc.Client.Helper.HttpHandlers
 {
     public class ConsoleLogger : DelegatingHandler
     {

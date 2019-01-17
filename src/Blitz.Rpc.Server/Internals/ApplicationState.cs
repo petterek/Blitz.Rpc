@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 
-namespace Blitz.Rpc.Server.Internals
+namespace Blitz.Rpc.HttpServer.Internals
 {
     internal class ApplicationState
     {
-        public ApplicationState(ServerConfig container)
+        public ApplicationState(ServerInfo container)
         {
             this.Container = container;
         }
 
-        public readonly ServerConfig Container;
+        public readonly ServerInfo Container;
 
         private Dictionary<String, HandlerInfo> handlerCache = new Dictionary<string, HandlerInfo>();
 

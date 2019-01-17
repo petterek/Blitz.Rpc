@@ -2,18 +2,19 @@ using Blitz.Rpc.Shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Blitz.Rpc.Server.Middleware
+namespace Blitz.Rpc.HttpServer.Middleware
 {
     public class ErrorHandlerMiddleWare
     {
         private readonly RequestDelegate next;
         private readonly ILogger<ErrorHandlerMiddleWare> logger;
-        private readonly ServerConfig container;
+        private readonly ServerInfo container;
 
-        public ErrorHandlerMiddleWare(RequestDelegate next, ServerConfig container, ILogger<ErrorHandlerMiddleWare> logger)
+        public ErrorHandlerMiddleWare(RequestDelegate next, ServerInfo container, ILogger<ErrorHandlerMiddleWare> logger)
         {
             this.logger = logger;
             this.container = container;
@@ -85,7 +86,7 @@ namespace Blitz.Rpc.Server.Middleware
                 StackTrace = ex.StackTrace,
                 Source = ex.Source,
                 ExceptionId = Guid.NewGuid(),
-                MachineName = container.MachineName(),
+                MachineName = container.MachineName,
                 InnerException = ex.InnerException
             };
 
@@ -102,7 +103,7 @@ namespace Blitz.Rpc.Server.Middleware
         {
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
-            container.Serializer.ToStream(context.Response.Body, env);
+            container.Serializers.First().ToStream(context.Response.Body, env);
 
             return context.Response.Body.FlushAsync();
         }

@@ -1,25 +1,26 @@
-using Blitz.Rpc.Server.Exceptions;
+using Blitz.Rpc.HttpServer.Adapters;
+using Blitz.Rpc.HttpServer.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Blitz.Rpc.Server.Internals
+namespace Blitz.Rpc.HttpServer.Internals
 {
     internal class HandlerInfo
     {
-        private readonly ServerConfig container;
+        private readonly ServerInfo container;
 
         private MethodInfo CreateTypedParam;
 
-        public HandlerInfo(ServerConfig container, string handlerTypeName, string functionName, string paramTypeName)
+        public HandlerInfo(ServerInfo container, string handlerTypeName, string functionName, string paramTypeName)
         {
             this.container = container;
             string typeNameInvariant = handlerTypeName.ToLower();
             string funcNameInvariant = functionName.ToLower();
 
-            HandlerType = container.AllRegistered().FirstOrDefault(t => t.Interface.FullName.ToLower() == typeNameInvariant).Interface;
+            HandlerType = container.Services.FirstOrDefault(t => t.Interface.FullName.ToLower() == typeNameInvariant).Interface;
             if (HandlerType == null) throw new UnableToGetHandlerException(handlerTypeName);
 
             foreach (var mi in HandlerType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
@@ -31,7 +32,7 @@ namespace Blitz.Rpc.Server.Internals
                     {
                         Method = mi;
                         ParamType = funcParams[0].ParameterType;
-                        CreateTypedParam = typeof(ISerializer).GetMethod("FromStream", new Type[] { typeof(Stream) }).MakeGenericMethod(ParamType);
+                        CreateTypedParam = typeof(ISerializer).GetMethod("FromStream", new Type[] { typeof(Stream), typeof(Type) });
                         break;
                     }
                     if (funcParams.Length == 0)
@@ -64,9 +65,10 @@ namespace Blitz.Rpc.Server.Internals
             }
         }
 
-        internal object CreateParam(Stream param)
+        internal object CreateParam(Stream param, Type paramType)
         {
-            var ret = CreateTypedParam.Invoke(container.Serializer, new object[] { param });
+            //Here we must do something smarter.. To match mimetype -> serializer
+            var ret = CreateTypedParam.Invoke(container.Serializers.First(), new object[] { param,paramType  });
             return ret;
         }
     }

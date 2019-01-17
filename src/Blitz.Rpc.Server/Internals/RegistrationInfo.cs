@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
-namespace Blitz.Rpc.Server.Internals
+namespace Blitz.Rpc.HttpServer.Internals
 {
     public class RegistrationInfo
     {
@@ -27,6 +27,6 @@ namespace Blitz.Rpc.Server.Internals
         }
 
         public readonly Type Interface;
-        public Dictionary<string, MethodInfo> HashCodes;
+        public Dictionary<string, MethodInfo> HashCodes { get; }
     }
 }

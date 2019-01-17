@@ -1,11 +1,11 @@
-using Blitz.Rpc.HttpHelper.HttpHandlers;
-using Blitz.Rpc.HttpHelper.UrlProvider;
+using Blitz.Rpc.Client.Helper.HttpHandlers;
+using Blitz.Rpc.Client.Helper.UrlProvider;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Reflection;
 
-namespace Blitz.Rpc.HttpHelper
+namespace Blitz.Rpc.Client.Helper
 {
     public class ClientConfig
     {

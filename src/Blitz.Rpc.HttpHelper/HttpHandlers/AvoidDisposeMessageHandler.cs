@@ -1,6 +1,6 @@
 using System.Net.Http;
 
-namespace Blitz.Rpc.HttpHelper.HttpHandlers
+namespace Blitz.Rpc.Client.Helper.HttpHandlers
 {
     internal class AvoidDisposeMessageHandler : DelegatingHandler
     {

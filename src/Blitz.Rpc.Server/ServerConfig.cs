@@ -1,46 +1,27 @@
-using Blitz.Rpc.Server.Events;
-using Blitz.Rpc.Server.Internals;
+using Blitz.Rpc.HttpServer.Adapters;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 
-namespace Blitz.Rpc.Server
+namespace Blitz.Rpc.HttpServer
 {
     public class ServerConfig
     {
-        private readonly List<RegistrationInfo> Services = new List<RegistrationInfo>();
+        internal Dictionary<Type, Type> ServiceList { get; } = new Dictionary<Type, Type>();
 
-        private WebRpcEvents eventHolder;
+        public List<ISerializer> Serializer { get; } = new List<ISerializer>(); 
+        
+        public string BasePath { get; set; } = "/";
 
-        public string MachineName()
+        public void RegisterService<TService>() where TService:class
         {
-            return Environment.MachineName;
+            ServiceList.Add(typeof(TService),null);
         }
 
-        public HostInfo Info { get; }
-        public ISerializer Serializer { get; }
-
-        public ServerConfig(ISerializer serializer, HostInfo info)
+        public void RegisterService<TService,TImplementation>() where TService:class where TImplementation: class, TService  
         {
-            Serializer = serializer;
-            Info = info;
-            this.eventHolder = new WebRpcEvents(this);
+            ServiceList.Add(typeof(TService), typeof(TImplementation));
         }
-
-        public string ResponseType => "text/json";
-
-        public WebRpcEvents Events => eventHolder;
-
-        public string BaseUrl { get; set; } = "/";
-
-        public IEnumerable<RegistrationInfo> AllRegistered()
-        {
-            return Services;
-        }
-
-        public void RegisterService<TServiceInterface>()
-        {
-            Services.Add(new RegistrationInfo(typeof(TServiceInterface)));
-            Events.OnEndpointRegistered(new RegistrationInfoEventArgs { Interface = typeof(TServiceInterface) });
-        }
+                
     }
 }

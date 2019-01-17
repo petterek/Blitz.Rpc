@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Blitz.Rpc.Server.Exceptions
+namespace Blitz.Rpc.HttpServer.Exceptions
 {
     [Serializable]
     internal class UnableToGetHandlerException : Exception

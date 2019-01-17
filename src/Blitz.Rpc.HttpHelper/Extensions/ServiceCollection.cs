@@ -1,5 +1,4 @@
-using Blitz.Rpc.Client;
-using Blitz.Rpc.HttpHelper.UrlProvider;
+using Blitz.Rpc.Client.Helper.UrlProvider;
 using Microsoft.Extensions.DependencyInjection;
 
 using System;
@@ -7,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 
-namespace Blitz.Rpc.HttpHelper.Extensions
+namespace Blitz.Rpc.Client.Helper.Extensions
 {
-    public static class ServiceCollection
+    public static class ServiceCollectionExtension
     {
         private static int ConfigCounter = 1;
 
@@ -36,7 +35,7 @@ namespace Blitz.Rpc.HttpHelper.Extensions
             var conf = new ClientConfig();
             config(conf);
 
-            var (ConfigType, holder) = CreateConfigWithMarkerInterface<IntegratedHttpJsonApiClientConfig>(configName);
+            var (ConfigType, holder) = CreateConfigWithMarkerInterface<IntegratedHttpApiClientConfig>(configName);
 
             holder.LastHandler = conf.LastHandler;
             holder.urlProvider = new DefaultUrlProvider(conf.TypeReg, conf.AssemblyReg);
@@ -45,7 +44,7 @@ namespace Blitz.Rpc.HttpHelper.Extensions
 
             conf.HttpHandlers.ForEach((h) => { if (h.register) container.AddTransient(h.type); }); //All HTTPHandlers is registerd.. (except those that should not :)
 
-            var ProxyApiClientType = Utils.DynamicInherit<IntegratedHttpJsonApiClient>($"Client_{configName}", new Dictionary<Type, Type> { { typeof(IntegratedHttpJsonApiClientConfig), ConfigType } }, typeof(ServiceCollection).GetMethod(nameof(FillTypes)), conf.HttpHandlers.Select(e => e.Item2).ToList());
+            var ProxyApiClientType = Utils.DynamicInherit<IntegratedHttpJsonApiClient>($"Client_{configName}", new Dictionary<Type, Type> { { typeof(IntegratedHttpApiClientConfig), ConfigType } }, typeof(ServiceCollectionExtension).GetMethod(nameof(FillTypes)), conf.HttpHandlers.Select(e => e.Item2).ToList());
 
             container.AddScoped(ProxyApiClientType);
 
