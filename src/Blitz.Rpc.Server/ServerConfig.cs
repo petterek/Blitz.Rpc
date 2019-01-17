@@ -1,5 +1,6 @@
-using Blitz.Rpc.HttpServer.Adapters;
-using Microsoft.Extensions.DependencyInjection;
+
+
+using Blitz.Rpc.Shared;
 using System;
 using System.Collections.Generic;
 

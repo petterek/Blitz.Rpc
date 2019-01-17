@@ -1,6 +1,12 @@
 # Blitz.Rpc
 
 Small utility framework for  out of process call, in .Net using interfaces as contracts. 
+Built to be used with a DI container. The Helper project is focused on extending for IServiceColletion from MS. 
+
+
+All comments and feedback is welcome, I want to keep the framework small, and it is build with extension in mind. 
+
+
 
 ## Setting up the client, look at the Demo/UsingClient/
 
@@ -63,3 +69,38 @@ public class Startup
 ```
 
 The interface IServiceOne is declared in a seperate project, and the idea is to share this contract thorugh nuget. 
+The serializer in both projects are declared as Interfaces to avoid dependencies against other nuget packages. 
+
+### Implementation of serializer using Newtosoft Json could look like this. 
+```csharp
+using Blitz.Rpc.Client.Helper;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+public class MySerializer : ISerializer
+{
+
+    JsonSerializer serializer;
+    public MySerializer()
+    {
+        serializer = new JsonSerializer();
+    }
+    public List<string> AcceptMimeType { get; } = new List<string> { "application/json", "text/json" };
+
+    public string ProduceMimeType { get; set; } = "application/json";
+
+    public object FromStream(Stream stream, Type returnType)
+    {
+        return serializer.Deserialize(new StreamReader(stream), returnType);
+    }
+
+    public void ToStream(Stream outstream, object v)
+    {
+        StreamWriter textWriter = new StreamWriter(outstream);
+        serializer.Serialize(textWriter, v);
+        textWriter.Flush();
+    }
+}
+```

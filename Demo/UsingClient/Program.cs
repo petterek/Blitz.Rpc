@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Blitz.Rpc.Client.Helper.Extensions;
 using System;
-using Blitz.Rpc.Client.Helper;
+using Blitz.Rpc.Shared;
 
 namespace UsingClient
 {

@@ -1,5 +1,6 @@
-﻿using Blitz.Rpc.HttpServer.Adapters;
+﻿
 using Blitz.Rpc.HttpServer.Middleware;
+using Blitz.Rpc.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System;

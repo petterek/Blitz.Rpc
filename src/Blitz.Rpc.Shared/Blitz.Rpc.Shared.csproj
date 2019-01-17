@@ -1,7 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <Description>Shared stuff for Blitz.Rpc</Description>
+    <PackageLicenseUrl>https://github.com/petterek/Blitz.Rpc/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/petterek/Blitz.Rpc</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>

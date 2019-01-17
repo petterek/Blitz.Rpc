@@ -1,5 +1,5 @@
-﻿using Blitz.Rpc.HttpServer.Adapters;
-using Blitz.Rpc.HttpServer.Internals;
+﻿using Blitz.Rpc.HttpServer.Internals;
+using Blitz.Rpc.Shared;
 using System;
 using System.Collections.Generic;
 

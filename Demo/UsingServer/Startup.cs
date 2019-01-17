@@ -1,5 +1,5 @@
-﻿using Blitz.Rpc.HttpServer.Adapters;
-using Blitz.Rpc.HttpServer.Extensions;
+﻿using Blitz.Rpc.HttpServer.Extensions;
+using Blitz.Rpc.Shared;
 using Contract;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

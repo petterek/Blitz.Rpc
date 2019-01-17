@@ -1,4 +1,5 @@
-﻿using Blitz.Rpc.HttpServer.Adapters;
+﻿
+using Blitz.Rpc.Shared;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

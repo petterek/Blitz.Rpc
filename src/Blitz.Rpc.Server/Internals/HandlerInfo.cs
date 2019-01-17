@@ -1,5 +1,5 @@
-using Blitz.Rpc.HttpServer.Adapters;
 using Blitz.Rpc.HttpServer.Exceptions;
+using Blitz.Rpc.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;

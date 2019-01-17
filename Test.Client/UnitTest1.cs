@@ -1,5 +1,5 @@
-using Blitz.Rpc.Client.Helper;
 using Blitz.Rpc.Client.Helper.Extensions;
+using Blitz.Rpc.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System;
