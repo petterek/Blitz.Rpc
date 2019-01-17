@@ -38,7 +38,7 @@ namespace Blitz.Rpc.Client.Helper.Extensions
             var (ConfigType, holder) = CreateConfigWithMarkerInterface<IntegratedHttpApiClientConfig>(configName);
 
             holder.LastHandler = conf.LastHandler;
-            holder.urlProvider = new DefaultUrlProvider(conf.TypeReg, conf.AssemblyReg);
+            holder.urlProvider = conf.UrlProvider?? new DefaultUrlProvider(conf.TypeReg, conf.AssemblyReg);
 
             container.AddSingleton(ConfigType, holder); //The config is now registered as a unique type in the container.
 
