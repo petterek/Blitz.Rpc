@@ -6,13 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blitz.Rpc.Client.Helper" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Blitz.Rpc.Client\Blitz.Rpc.Client.csproj" />
-    <ProjectReference Include="..\..\src\Blitz.Rpc.HttpHelper\Blitz.Rpc.Client.Helper.csproj" />
     <ProjectReference Include="..\Contract\Contract.csproj" />
   </ItemGroup>
 

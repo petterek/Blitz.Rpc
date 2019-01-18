@@ -15,6 +15,7 @@ namespace UsingClient
             serviceCollection.AddSingleton<ISerializer>(new MySerializer());
 
             serviceCollection.ConfigureHttpApiClient(conf => {
+                
                 conf.AddClientFor<Contract.IServiceOne>("http://localhost:5000/");
             });
 
