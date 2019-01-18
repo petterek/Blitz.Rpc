@@ -3,6 +3,7 @@ using Blitz.Rpc.HttpServer.Internals;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,7 +27,9 @@ namespace Blitz.Rpc.HttpServer.Middleware
 
         public async Task Invoke(HttpContext context, IServiceProvider serviceProvider)
         {
+            var t = new Internals.TimerFunc.InternalTimer();
             string Identifier = context.Request.Path.ToUriComponent().Replace(_container.BasePath, "");
+            
 
             if (Identifier == "" | context.Request.Method == "GET")
             {
@@ -57,17 +60,18 @@ namespace Blitz.Rpc.HttpServer.Middleware
                     throw new ArgumentOutOfRangeException(hInfo.ParamType.Name, $"Not able to create param of '{hInfo.ParamType.Name}' from string: '{context.Request.Body}'");
                 }
             }
-
+            var sw = new Stopwatch();
             logger.LogTrace("Start handler {handler}", hInfo.HandlerType.FullName);
             var data = hInfo.Execute(param, serviceProvider);
             logger.LogTrace("End handler {handler}", hInfo.HandlerType.FullName);
 
             var outStream = AppState.Container.Serializers.First();
 
-
+            context.Response.Headers.Add("X-ExecutionTimeInNanoSecond", new Microsoft.Extensions.Primitives.StringValues(t.Elapsed().ToString()));
             context.Response.ContentType = outStream.ProduceMimeType;
             context.Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
             outStream.ToStream(context.Response.Body, data);
+            
         }
     }
 }
