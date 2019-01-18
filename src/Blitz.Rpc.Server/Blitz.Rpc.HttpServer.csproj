@@ -8,6 +8,7 @@
     <RepositoryType>GIT</RepositoryType>
     <RepositoryUrl>https://github.com/petterek/Blitz.Rpc</RepositoryUrl>
     <PackageLicenseUrl>MIT</PackageLicenseUrl>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
