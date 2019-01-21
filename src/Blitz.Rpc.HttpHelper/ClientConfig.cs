@@ -11,7 +11,7 @@ namespace Blitz.Rpc.Client.Helper
     {
         internal readonly List<(bool register, Type type)> HttpHandlers = new List<(bool, Type)>();
         internal readonly List<Type> Clients = new List<Type>();
-
+        
         internal Dictionary<Assembly, List<string>> AssemblyReg = new Dictionary<Assembly, List<string>>();
         internal Dictionary<Type, List<string>> TypeReg = new Dictionary<Type, List<string>>();
         internal HttpMessageHandler LastHandler = new AvoidDisposeMessageHandler(new HttpClientHandler());

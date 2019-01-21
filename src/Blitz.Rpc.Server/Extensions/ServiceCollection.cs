@@ -16,15 +16,12 @@ namespace Blitz.Rpc.HttpServer.Extensions
             
             var configuration = new ServerConfig();
             config(configuration);
-
-
-
+                       
             RegisterServicesInContainer(services, configuration);
 
             //Create the container from the configuration.. 
             configHolder.Add( CreateServerInfo(configuration));
-
-
+            
             return services;
         }
 

@@ -21,7 +21,7 @@ namespace Blitz.Rpc.Client.Helper.Extensions
 
         public static void ConfigureHttpApiClient(this IServiceCollection container, Action<ClientConfig> config)
         {
-            ConfigureClientInternal(container, config);
+            ConfigureClientInternal(new ServiceCollectionWrapperImplementation( container), config);
         }
 
         /// <summary>
@@ -29,16 +29,17 @@ namespace Blitz.Rpc.Client.Helper.Extensions
         /// </summary>
         /// <param name="container"></param>
         /// <param name="config"></param>
-        private static void ConfigureClientInternal(IServiceCollection container, Action<ClientConfig> config)
+        private static void ConfigureClientInternal(IServiceCollectionWrapper container, Action<ClientConfig> config)
         {
             string configName = $"Clientconfig_{GetUniqueNumber()}";
             var conf = new ClientConfig();
+
             config(conf);
 
             var (ConfigType, holder) = CreateConfigWithMarkerInterface<IntegratedHttpApiClientConfig>(configName);
 
             holder.LastHandler = conf.LastHandler;
-            holder.urlProvider = conf.UrlProvider?? new DefaultUrlProvider(conf.TypeReg, conf.AssemblyReg);
+            holder.urlProvider = conf.UrlProvider ?? new DefaultUrlProvider(conf.TypeReg, conf.AssemblyReg);
 
             container.AddSingleton(ConfigType, holder); //The config is now registered as a unique type in the container.
 
