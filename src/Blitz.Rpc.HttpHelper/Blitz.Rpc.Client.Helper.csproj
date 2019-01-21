@@ -5,7 +5,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <LangVersion>7.3</LangVersion>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
+    <RepositoryType>GIT</RepositoryType>
+    <RepositoryUrl>https://github.com/petterek/Blitz.Rpc</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/petterek/Blitz.Rpc</PackageProjectUrl>
+    <PackageTags>WebRpc dotnet</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
