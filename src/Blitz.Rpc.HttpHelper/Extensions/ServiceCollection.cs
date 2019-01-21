@@ -38,6 +38,7 @@ namespace Blitz.Rpc.Client.Helper.Extensions
 
             var (ConfigType, holder) = CreateConfigWithMarkerInterface<IntegratedHttpApiClientConfig>(configName);
 
+            holder.urlProvider = conf.UrlProvider;
             holder.LastHandler = conf.LastHandler;
             
 
