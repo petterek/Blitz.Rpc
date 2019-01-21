@@ -16,7 +16,7 @@ namespace Blitz.Rpc.Client.Helper
         internal Dictionary<Type, List<string>> TypeReg = new Dictionary<Type, List<string>>();
         internal HttpMessageHandler LastHandler = new AvoidDisposeMessageHandler(new HttpClientHandler());
 
-        internal IUrlProvider UrlProvider;
+        public IUrlProvider UrlProvider { get; set; }
 
         public void AddClientFor<T>()
         {
@@ -29,10 +29,7 @@ namespace Blitz.Rpc.Client.Helper
             AddUrlForType<T>(useUrl);
         }
 
-        public void SetUrlProvider(IUrlProvider p)
-        {
-            UrlProvider = p;
-        }
+        
 
         public void AddMessageHandler<THandler>(bool register = true) where THandler : DelegatingHandler
         {

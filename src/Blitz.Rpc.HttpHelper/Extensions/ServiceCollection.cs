@@ -33,13 +33,13 @@ namespace Blitz.Rpc.Client.Helper.Extensions
         {
             string configName = $"Clientconfig_{GetUniqueNumber()}";
             var conf = new ClientConfig();
-
+            conf.UrlProvider = new DefaultUrlProvider(conf.TypeReg, conf.AssemblyReg);
             config(conf);
 
             var (ConfigType, holder) = CreateConfigWithMarkerInterface<IntegratedHttpApiClientConfig>(configName);
 
             holder.LastHandler = conf.LastHandler;
-            holder.urlProvider = conf.UrlProvider ?? new DefaultUrlProvider(conf.TypeReg, conf.AssemblyReg);
+            
 
             container.AddSingleton(ConfigType, holder); //The config is now registered as a unique type in the container.
 
