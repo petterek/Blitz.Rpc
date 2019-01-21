@@ -19,6 +19,8 @@ namespace Blitz.Rpc.Client.Helper.UrlProvider
             AssemblyReg = assemblyReg;
         }
 
+        public IUrlProvider Next { get; set; }
+
         public string GetEndpoint(RpcMethodInfo invokeInfo)
         {
             if (TypeReg.ContainsKey(invokeInfo.MasterType))
@@ -30,7 +32,15 @@ namespace Blitz.Rpc.Client.Helper.UrlProvider
                 return AssemblyReg[invokeInfo.MasterType.Assembly][0];
             }
 
-            throw new UrlNotConfiguredException(invokeInfo);
+            if(Next == null)
+            {
+                throw new UrlNotConfiguredException(invokeInfo);
+            }
+            else
+            {
+                return Next.GetEndpoint(invokeInfo);
+            }
+            
         }
     }
 }

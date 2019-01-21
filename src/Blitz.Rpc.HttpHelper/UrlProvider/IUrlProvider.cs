@@ -5,5 +5,6 @@ namespace Blitz.Rpc.Client.Helper.UrlProvider
     public interface IUrlProvider
     {
         string GetEndpoint(RpcMethodInfo invokeInfo);
+        IUrlProvider Next { get; set;  }
     }
 }
