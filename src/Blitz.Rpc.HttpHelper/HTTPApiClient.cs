@@ -24,15 +24,18 @@ namespace Blitz.Rpc.Client.Helper
 
         public async Task<object> Invoke(RpcMethodInfo toCall, object[] param)
         {
+
+
+            if (param == null) param = new object[0];
             //This format is recognized by the default implementation of the server.
             //The base url for the request is expected to be set on the HttpClient
             var requestUri = $"{toCall.ServiceId}.{toCall.Name}-{toCall.ParamType}";
-
             var theHttpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri);
 
             var outstream = new System.IO.MemoryStream();
 
             var theSerializer = serializers[0]; //Use the first seriallizer, this can be expanded..  
+
 
             switch (param.Length)
             {
