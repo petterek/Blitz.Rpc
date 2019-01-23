@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <LangVersion>7.3</LangVersion>
-    <Version>1.3.2</Version>
+    <Version>1.3.3</Version>
     <RepositoryType>GIT</RepositoryType>
     <RepositoryUrl>https://github.com/petterek/Blitz.Rpc</RepositoryUrl>
     <PackageProjectUrl>https://github.com/petterek/Blitz.Rpc</PackageProjectUrl>
