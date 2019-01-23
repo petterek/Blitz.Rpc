@@ -16,6 +16,9 @@ namespace Blitz.Rpc.Client.Helper
         internal Dictionary<Type, List<string>> TypeReg = new Dictionary<Type, List<string>>();
         internal HttpMessageHandler LastHandler = new AvoidDisposeMessageHandler(new HttpClientHandler());
 
+
+        public TimeSpan RemoteOperationTimeout { get; set; } = TimeSpan.FromSeconds(100);
+
         public IUrlProvider UrlProvider { get; set; }
 
         public void AddClientFor<T>()

@@ -31,8 +31,10 @@ namespace Blitz.Rpc.Client.Helper
             if (_getClient == null)
             {
                 HttpClient httpClient = new HttpClient(Build(), false);
+                httpClient.Timeout = config.TimeOut;
                 httpClient.BaseAddress = new System.Uri(config.urlProvider.GetEndpoint(toCall));
                 _getClient = new HttpApiClient(httpClient,serializers);
+                
             }
             return _getClient;
         }

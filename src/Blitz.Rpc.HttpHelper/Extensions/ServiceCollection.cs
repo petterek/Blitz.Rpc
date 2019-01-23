@@ -37,7 +37,7 @@ namespace Blitz.Rpc.Client.Helper.Extensions
             config(conf);
 
             var (ConfigType, holder) = CreateConfigWithMarkerInterface<IntegratedHttpApiClientConfig>(configName);
-
+            holder.TimeOut = conf.RemoteOperationTimeout;
             holder.urlProvider = conf.UrlProvider;
             holder.LastHandler = conf.LastHandler;
             
