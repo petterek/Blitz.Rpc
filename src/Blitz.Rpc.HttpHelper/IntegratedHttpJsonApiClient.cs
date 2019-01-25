@@ -24,7 +24,7 @@ namespace Blitz.Rpc.Client.Helper
             return GetClient(toCall).Invoke(toCall, param);
         }
 
-        
+
         private HttpApiClient GetClient(RpcMethodInfo toCall)
         {
             HttpClient httpClient = new HttpClient(Build(), false);
@@ -33,29 +33,35 @@ namespace Blitz.Rpc.Client.Helper
             return new HttpApiClient(httpClient, serializers);
         }
 
+
+        DelegatingHandler lastHandler = null;
+        DelegatingHandler firstHandler = null;
+
         private HttpMessageHandler Build()
         {
-            DelegatingHandler lastHandler = null;
-            DelegatingHandler firstHandler = null;
 
-            foreach (var handler in HttpHandlers)
+            if (firstHandler == null)
             {
-                var thisHandler = handler;
-                if (lastHandler != null)
+                foreach (var handler in HttpHandlers)
                 {
-                    lastHandler.InnerHandler = thisHandler;
-                }
-                else
-                {
-                    firstHandler = thisHandler;
+                    var thisHandler = handler;
+                    if (lastHandler != null)
+                    {
+                        lastHandler.InnerHandler = thisHandler;
+                    }
+                    else
+                    {
+                        firstHandler = thisHandler;
+                    }
+
+                    lastHandler = thisHandler;
                 }
 
-                lastHandler = thisHandler;
+                if (firstHandler == null) return config.LastHandler;
+
+                lastHandler.InnerHandler = config.LastHandler;
             }
 
-            if (firstHandler == null) return config.LastHandler;
-
-            lastHandler.InnerHandler = config.LastHandler;
 
             return firstHandler;
         }
