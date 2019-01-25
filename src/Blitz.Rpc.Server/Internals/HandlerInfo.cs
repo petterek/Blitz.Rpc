@@ -20,7 +20,7 @@ namespace Blitz.Rpc.HttpServer.Internals
             string typeNameInvariant = handlerTypeName.ToLower();
             string funcNameInvariant = functionName.ToLower();
 
-            HandlerType = container.Services.FirstOrDefault(t => t.Interface.FullName.ToLower() == typeNameInvariant).Interface;
+            HandlerType = container.Services.FirstOrDefault(t => t.Interface.FullName.ToLower() == typeNameInvariant)?.Interface;
             if (HandlerType == null) throw new UnableToGetHandlerException(handlerTypeName);
 
             foreach (var mi in HandlerType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))

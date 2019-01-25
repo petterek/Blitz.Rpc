@@ -1,4 +1,5 @@
 using Blitz.Rpc.Client.Helper.UrlProvider;
+using System;
 using System.Net.Http;
 
 namespace Blitz.Rpc.Client.Helper
@@ -7,6 +8,6 @@ namespace Blitz.Rpc.Client.Helper
     {
         public IUrlProvider urlProvider;
         public HttpMessageHandler LastHandler;
-
+        public TimeSpan TimeOut;
     }
 }
