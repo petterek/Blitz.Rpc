@@ -11,11 +11,11 @@ namespace Blitz.Rpc.Client.Helper
     {
         public List<DelegatingHandler> HttpHandlers = new List<DelegatingHandler>();
         private readonly IntegratedHttpApiClientConfig config;
-        readonly IList<ISerializer> serializers;
+        readonly ISerializer serializer;
 
-        public IntegratedHttpJsonApiClient(IntegratedHttpApiClientConfig config, IEnumerable<ISerializer> serializers)
+        public IntegratedHttpJsonApiClient(IntegratedHttpApiClientConfig config, ISerializer serializers)
         {
-            this.serializers = serializers.ToList();
+            this.serializer = serializers;
             this.config = config;
         }
 
@@ -30,7 +30,7 @@ namespace Blitz.Rpc.Client.Helper
             HttpClient httpClient = new HttpClient(Build(), false);
             httpClient.Timeout = config.TimeOut;
             httpClient.BaseAddress = new System.Uri(config.urlProvider.GetEndpoint(toCall));
-            return new HttpApiClient(httpClient, serializers);
+            return new HttpApiClient(httpClient, serializer);
         }
 
 

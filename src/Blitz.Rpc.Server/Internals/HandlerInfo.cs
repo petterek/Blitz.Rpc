@@ -68,7 +68,7 @@ namespace Blitz.Rpc.HttpServer.Internals
         internal object CreateParam(Stream param, Type paramType)
         {
             //Here we must do something smarter.. To match mimetype -> serializer
-            var ret = CreateTypedParam.Invoke(container.Serializers.First(), new object[] { param,paramType  });
+            var ret = CreateTypedParam.Invoke(container.Serializer, new object[] { param,paramType  });
             return ret;
         }
     }

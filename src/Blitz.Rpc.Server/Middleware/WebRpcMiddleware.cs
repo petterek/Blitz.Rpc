@@ -65,7 +65,7 @@ namespace Blitz.Rpc.HttpServer.Middleware
             var data = hInfo.Execute(param, serviceProvider);
             logger.LogTrace("End handler {handler}", hInfo.HandlerType.FullName);
 
-            var outStream = AppState.Container.Serializers.First();
+            var outStream = AppState.Container.Serializer;
 
             context.Response.Headers.Add("X-ExecutionTimeInNanoSecond", new Microsoft.Extensions.Primitives.StringValues(t.Elapsed().ToString()));
             context.Response.ContentType = outStream.ProduceMimeType;

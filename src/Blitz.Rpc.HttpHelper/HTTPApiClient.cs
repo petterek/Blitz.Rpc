@@ -14,12 +14,12 @@ namespace Blitz.Rpc.Client.Helper
     public class HttpApiClient : IApiClient
     {
         private readonly HttpClient httpClient;
-        private readonly IList<ISerializer> serializers;
+        readonly ISerializer serializer;
 
-        public HttpApiClient(HttpClient httpClient,IList<ISerializer> serializers)
+        public HttpApiClient(HttpClient httpClient,ISerializer serializers)
         {
             this.httpClient = httpClient;
-            this.serializers = serializers;
+            this.serializer = serializers;
         }
 
         public async Task<object> Invoke(RpcMethodInfo toCall, object[] param)
@@ -34,9 +34,8 @@ namespace Blitz.Rpc.Client.Helper
 
             var outstream = new System.IO.MemoryStream();
 
-            var theSerializer = serializers[0]; //Use the first seriallizer, this can be expanded..  
-
-
+            var theSerializer = serializer; 
+            
             switch (param.Length)
             {
                 case 0:

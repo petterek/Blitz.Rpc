@@ -103,7 +103,7 @@ namespace Blitz.Rpc.HttpServer.Middleware
         {
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
-            container.Serializers.First().ToStream(context.Response.Body, env);
+            container.Serializer.ToStream(context.Response.Body, env);
 
             return context.Response.Body.FlushAsync();
         }

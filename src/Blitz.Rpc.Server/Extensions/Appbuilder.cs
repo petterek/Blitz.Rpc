@@ -16,11 +16,11 @@ namespace Blitz.Rpc.HttpServer.Extensions
 
             if (config == null) throw new Exceptions.NoConfigurationFoundException();
 
-            var serializers = builder.ApplicationServices.GetServices<ISerializer>();
+            var serializer = builder.ApplicationServices.GetService<ISerializer>();
 
             foreach (var container in config)
             {
-                container.Serializers.AddRange(serializers);
+                container.Serializer = serializer;
                 builder.MapWhen(
                     (ctx) => ctx.Request.Path.ToUriComponent().StartsWith(container.BasePath, StringComparison.OrdinalIgnoreCase),
                     (b) =>

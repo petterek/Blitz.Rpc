@@ -75,7 +75,7 @@ namespace Blitz.Rpc.HttpServer.Middleware
                     propertiesAndFields.AddRange(info.ParamType.GetFields().Select(item => (item.Name, item.FieldType.Name)).ToList());
                     propertiesAndFields.AddRange(info.ParamType.GetProperties().Select(item => (item.Name, item.PropertyType.Name)));
                     var paramInstance = Activator.CreateInstance(info.ParamType);
-                    _container.Serializers.First().ToStream(stream, paramInstance);
+                    _container.Serializer.ToStream(stream, paramInstance);
                     stream.Position = 0;
                     paramInstanceSerialized = new System.IO.StreamReader(stream).ReadToEnd();
                     paramName = info.ParamType.FullName;

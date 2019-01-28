@@ -13,7 +13,7 @@ namespace Blitz.Rpc.HttpServer
 
 
         public string BasePath { get; set; }
-        public List<ISerializer> Serializers { get; } = new List<ISerializer>();
+        public ISerializer Serializer { get; set; } 
         public List<RegistrationInfo> Services { get; } = new List<RegistrationInfo>();
         public List<Type> PreMiddleware { get; } = new List<Type>();
 
