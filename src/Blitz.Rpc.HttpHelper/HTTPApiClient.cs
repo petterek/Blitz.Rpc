@@ -1,6 +1,5 @@
 using Blitz.Rpc.Client.BaseClasses;
 using Blitz.Rpc.Shared;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
