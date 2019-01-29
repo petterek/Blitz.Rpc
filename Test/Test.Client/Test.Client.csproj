@@ -14,8 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Blitz.Rpc.Client\Blitz.Rpc.Client.csproj" />
-    <ProjectReference Include="..\src\Blitz.Rpc.HttpHelper\Blitz.Rpc.Client.Helper.csproj" />
+    <ProjectReference Include="..\..\src\Blitz.Rpc.Client\Blitz.Rpc.Client.csproj" />
+    <ProjectReference Include="..\..\src\Blitz.Rpc.HttpHelper\Blitz.Rpc.Client.Helper.csproj" />
+    <ProjectReference Include="..\..\src\Blitz.Rpc.Shared\Blitz.Rpc.Shared.csproj" />
   </ItemGroup>
 
 </Project>

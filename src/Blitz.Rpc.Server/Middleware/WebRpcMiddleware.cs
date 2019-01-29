@@ -54,7 +54,7 @@ namespace Blitz.Rpc.HttpServer.Middleware
             object param = null;
             if (hInfo.ParamType != null)
             {
-                param = hInfo.CreateParam(context.Request.Body, hInfo.ParamType);
+                param = hInfo.CreateParam(context.Request.Body);
                 if (param == null)
                 {
                     throw new ArgumentOutOfRangeException(hInfo.ParamType.Name, $"Not able to create param of '{hInfo.ParamType.Name}' from string: '{context.Request.Body}'");

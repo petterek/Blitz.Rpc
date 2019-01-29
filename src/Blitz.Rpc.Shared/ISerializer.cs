@@ -11,5 +11,6 @@ namespace Blitz.Rpc.Shared
 
         void ToStream(Stream outstream, object v);
         object FromStream(Stream stream, Type returnType);
+        object[]FromStream(Stream stream, Type[] returnType);
     }
 }

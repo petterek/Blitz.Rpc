@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Blitz.Rpc.HttpServer.Internals
 {
-    internal class ApplicationState
+    class ApplicationState
     {
         public ApplicationState(ServerInfo container)
         {
@@ -14,26 +15,9 @@ namespace Blitz.Rpc.HttpServer.Internals
 
         private Dictionary<String, HandlerInfo> handlerCache = new Dictionary<string, HandlerInfo>();
 
-        public class IdentifierParts
-        {
-            public string ClassName;
-            public string FunctionName;
-            public string ParamTypeName;
-        }
 
-        public IdentifierParts GetParts(string identifier)
-        {
-            var ret = new IdentifierParts();
-            var p = identifier.Split('-');
-            var className = p[0].Split('.');
 
-            ret.FunctionName = className[className.Length - 1];
-            ret.ClassName = p[0].Replace("." + ret.FunctionName, "");
-
-            ret.ParamTypeName = p[1];
-            return ret;
-        }
-
+        
         internal void ValidateRequest(HandlerInfo hInfo)
         {
         }
@@ -47,14 +31,28 @@ namespace Blitz.Rpc.HttpServer.Internals
                 {
                     if (!handlerCache.ContainsKey(key))
                     {
-                        var parts = GetParts(identifier);
-                        var handlerInfo = new HandlerInfo(Container, parts.ClassName, parts.FunctionName, parts.ParamTypeName);
-                        handlerCache[key] = handlerInfo;
+                        createHandler(key);
                     }
                 }
             }
 
             return handlerCache[key];
+        }
+
+
+        public string GetServiceName(string identifier)
+        {
+            return Regex.Match(identifier.Split('-')[0], @"(.*)\.+").Groups[1].Value;
+        }
+
+
+
+        private void createHandler(string key)
+        {
+            var regInfo = Container.Services[GetServiceName(key)];
+            var method = regInfo.MethodSignatures[key];
+            var handlerInfo = new HandlerInfo(Container.Serializer, method.Service, method.Method);
+            handlerCache[key] = handlerInfo;
         }
     }
 }

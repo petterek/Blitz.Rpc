@@ -1,11 +1,17 @@
 using Blitz.Rpc.Client.BaseClasses;
 using Blitz.Rpc.Shared;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+
+[assembly: InternalsVisibleTo("Test.Client")]
 
 namespace Blitz.Rpc.Client.Helper
 {
+
+
     /// <summary>
     /// This is the default implementation for a ApiClient, the serializer is replaceable.
     /// The serializer must ofcourse match the serializer in the other end.
@@ -29,13 +35,13 @@ namespace Blitz.Rpc.Client.Helper
             if (param == null) param = new object[0];
             //This format is recognized by the default implementation of the server.
             //The base url for the request is expected to be set on the HttpClient
-            var requestUri = $"{toCall.ServiceId}.{toCall.Name}-{toCall.ParamType}";
+            string requestUri = CreateIdString(toCall);
             var theHttpRequest = new HttpRequestMessage(HttpMethod.Post, requestUri);
 
             var outstream = new System.IO.MemoryStream();
 
-            var theSerializer = serializer; 
-            
+            var theSerializer = serializer;
+
             switch (param.Length)
             {
                 case 0:
@@ -73,6 +79,11 @@ namespace Blitz.Rpc.Client.Helper
             {
                 throw new HttpRequestException($"{response.StatusCode} {response.Content.ReadAsStringAsync().Result}");
             }
+        }
+
+       internal string CreateIdString(RpcMethodInfo toCall)
+        {
+            return $"{toCall.ServiceId}.{toCall.Name}-{string.Join("-",toCall.ParamType.Select(p=> p.FullName).ToArray())}";
         }
     }
 }

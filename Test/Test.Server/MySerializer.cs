@@ -1,11 +1,11 @@
-﻿using Blitz.Rpc.Shared;
+using Blitz.Rpc.Shared;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace UsingClient
+namespace Test.Server
 {
     public class MySerializer : ISerializer
     {
@@ -29,7 +29,7 @@ namespace UsingClient
             var data = JToken.Load(new JsonTextReader(new StreamReader(stream)));
             if (!(data is JArray))
             {
-                throw new Exception();
+                throw new Exception("Expected array of objects");
             }
             var list = new List<object>();
             int i = 0;
