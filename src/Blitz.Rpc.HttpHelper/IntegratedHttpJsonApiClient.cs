@@ -11,11 +11,11 @@ namespace Blitz.Rpc.Client.Helper
     {
         public List<DelegatingHandler> HttpHandlers = new List<DelegatingHandler>();
         private readonly IntegratedHttpApiClientConfig config;
-        readonly IList<ISerializer> serializers;
+        readonly ISerializer serializer;
 
-        public IntegratedHttpJsonApiClient(IntegratedHttpApiClientConfig config, IEnumerable<ISerializer> serializers)
+        public IntegratedHttpJsonApiClient(IntegratedHttpApiClientConfig config, ISerializer serializers)
         {
-            this.serializers = serializers.ToList();
+            this.serializer = serializers;
             this.config = config;
         }
 
@@ -24,38 +24,44 @@ namespace Blitz.Rpc.Client.Helper
             return GetClient(toCall).Invoke(toCall, param);
         }
 
-        
+
         private HttpApiClient GetClient(RpcMethodInfo toCall)
         {
             HttpClient httpClient = new HttpClient(Build(), false);
             httpClient.Timeout = config.TimeOut;
             httpClient.BaseAddress = new System.Uri(config.urlProvider.GetEndpoint(toCall));
-            return new HttpApiClient(httpClient, serializers);
+            return new HttpApiClient(httpClient, serializer);
         }
+
+
+        DelegatingHandler lastHandler = null;
+        DelegatingHandler firstHandler = null;
 
         private HttpMessageHandler Build()
         {
-            DelegatingHandler lastHandler = null;
-            DelegatingHandler firstHandler = null;
 
-            foreach (var handler in HttpHandlers)
+            if (firstHandler == null)
             {
-                var thisHandler = handler;
-                if (lastHandler != null)
+                foreach (var handler in HttpHandlers)
                 {
-                    lastHandler.InnerHandler = thisHandler;
-                }
-                else
-                {
-                    firstHandler = thisHandler;
+                    var thisHandler = handler;
+                    if (lastHandler != null)
+                    {
+                        lastHandler.InnerHandler = thisHandler;
+                    }
+                    else
+                    {
+                        firstHandler = thisHandler;
+                    }
+
+                    lastHandler = thisHandler;
                 }
 
-                lastHandler = thisHandler;
+                if (firstHandler == null) return config.LastHandler;
+
+                lastHandler.InnerHandler = config.LastHandler;
             }
 
-            if (firstHandler == null) return config.LastHandler;
-
-            lastHandler.InnerHandler = config.LastHandler;
 
             return firstHandler;
         }

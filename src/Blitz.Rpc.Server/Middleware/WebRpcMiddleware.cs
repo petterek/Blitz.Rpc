@@ -54,7 +54,7 @@ namespace Blitz.Rpc.HttpServer.Middleware
             object param = null;
             if (hInfo.ParamType != null)
             {
-                param = hInfo.CreateParam(context.Request.Body, hInfo.ParamType);
+                param = hInfo.CreateParam(context.Request.Body);
                 if (param == null)
                 {
                     throw new ArgumentOutOfRangeException(hInfo.ParamType.Name, $"Not able to create param of '{hInfo.ParamType.Name}' from string: '{context.Request.Body}'");
@@ -65,7 +65,7 @@ namespace Blitz.Rpc.HttpServer.Middleware
             var data = hInfo.Execute(param, serviceProvider);
             logger.LogTrace("End handler {handler}", hInfo.HandlerType.FullName);
 
-            var outStream = AppState.Container.Serializers.First();
+            var outStream = AppState.Container.Serializer;
 
             context.Response.Headers.Add("X-ExecutionTimeInNanoSecond", new Microsoft.Extensions.Primitives.StringValues(t.Elapsed().ToString()));
             context.Response.ContentType = outStream.ProduceMimeType;

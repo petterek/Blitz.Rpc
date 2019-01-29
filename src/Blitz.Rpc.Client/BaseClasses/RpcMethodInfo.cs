@@ -8,7 +8,7 @@ namespace Blitz.Rpc.Client.BaseClasses
         public Type MasterType;
         public Type DefinedIn;
         public Type ReturnType;
-        public Type ParamType;
+        public Type[] ParamType;
         public string PackageName;
         public string ServiceId;
         public int Major;

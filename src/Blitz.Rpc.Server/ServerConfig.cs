@@ -10,7 +10,7 @@ namespace Blitz.Rpc.HttpServer
     {
         internal Dictionary<Type, Type> ServiceList { get; } = new Dictionary<Type, Type>();
 
-        public List<ISerializer> Serializer { get; } = new List<ISerializer>(); 
+        public ISerializer Serializer { get; }  
         
         public string BasePath { get; set; } = "/";
 

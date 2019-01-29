@@ -27,7 +27,7 @@ namespace Blitz.Rpc.HttpServer.Extensions
 
         private static ServerInfo CreateServerInfo(ServerConfig container)
         {
-            var ret = new ServerInfo();
+            var ret = new ServerInfo(container.Serializer);
 
             foreach(var kv in container.ServiceList)
             {

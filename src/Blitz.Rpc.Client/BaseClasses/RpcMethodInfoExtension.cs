@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Blitz.Rpc.Client.BaseClasses
@@ -15,7 +16,7 @@ namespace Blitz.Rpc.Client.BaseClasses
                 ServiceId = info.DeclaringType.FullName,
                 PackageName = info.DeclaringType.Assembly.GetName().Name,
                 ReturnType = info.ReturnType,
-                ParamType = info.GetParameters().Length == 0 ? null : info.GetParameters()[0].ParameterType,
+                ParamType = info.GetParameters().Select(p=>p.ParameterType).ToArray(),
                 Major = info.DeclaringType.Assembly.GetName().Version.Major,
                 Minor = info.DeclaringType.Assembly.GetName().Version.Minor
             };

@@ -1,4 +1,3 @@
-using Blitz.Rpc.HttpServer.Exceptions;
 using Blitz.Rpc.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -8,68 +7,73 @@ using System.Reflection;
 
 namespace Blitz.Rpc.HttpServer.Internals
 {
-    internal class HandlerInfo
+    class HandlerInfo
     {
-        private readonly ServerInfo container;
-
         private MethodInfo CreateTypedParam;
+        private MethodInfo CreateArrayOfTypedParam;
+        readonly ISerializer serializer;
+        private int paramCount = 0;
 
-        public HandlerInfo(ServerInfo container, string handlerTypeName, string functionName, string paramTypeName)
+        public HandlerInfo(ISerializer serializer, Type service, MethodInfo method)
         {
-            this.container = container;
-            string typeNameInvariant = handlerTypeName.ToLower();
-            string funcNameInvariant = functionName.ToLower();
+            this.serializer = serializer;
+            
+            parameterInfo = method.GetParameters();
+            paramCount = parameterInfo.Count();
+            HandlerType = service;
+            Method = method;
 
-            HandlerType = container.Services.FirstOrDefault(t => t.Interface.FullName.ToLower() == typeNameInvariant)?.Interface;
-            if (HandlerType == null) throw new UnableToGetHandlerException(handlerTypeName);
-
-            foreach (var mi in HandlerType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
+            switch (paramCount)
             {
-                if (mi.Name.ToLower() == funcNameInvariant)
-                {
-                    var funcParams = mi.GetParameters();
-                    if (funcParams.Length == 1 && funcParams[0].ParameterType.FullName.ToLower() == paramTypeName.ToLower())
-                    {
-                        Method = mi;
-                        ParamType = funcParams[0].ParameterType;
-                        CreateTypedParam = typeof(ISerializer).GetMethod("FromStream", new Type[] { typeof(Stream), typeof(Type) });
-                        break;
-                    }
-                    if (funcParams.Length == 0)
-                    {
-                        Method = mi;
-                        ParamType = null;
-                        break;
-                    }
-                }
-            }
+                case 0:
 
-            if (Method == null) { throw new NotSupportedException(functionName); }
+                    break;
+                case 1:
+                    CreateTypedParam = typeof(ISerializer).GetMethod("FromStream", new Type[] { typeof(Stream), typeof(Type) });
+                    ParamType = method.GetParameters()[0].ParameterType;
+                    break;
+
+                default:
+                    CreateArrayOfTypedParam = typeof(ISerializer).GetMethod("FromStream", new Type[] { typeof(Stream), typeof(Type[]) });
+                    ParamType = typeof(Type[]);
+                    MultiParamTypes = parameterInfo.Select(el => el.ParameterType).ToArray();
+                    break;
+            }
         }
 
+        ParameterInfo[] parameterInfo;
         public Type HandlerType;
         public Type ParamType;
         public MethodInfo Method;
+        public Type[] MultiParamTypes;
 
         public object Execute(object param, IServiceProvider serviceProvider)
         {
             var handler = serviceProvider.GetRequiredService(HandlerType);
             if (handler == null) throw new ArgumentNullException(HandlerType.FullName);
-            if (param != null)
+
+            switch(paramCount)
             {
-                return Method.Invoke(handler, new object[] { param });
-            }
-            else
-            {
-                return Method.Invoke(handler, new object[0]);
+                case 0:
+                    return Method.Invoke(handler, new object[0]);
+                case 1:
+                    return Method.Invoke(handler, new object[] { param });
+                default:
+                    return Method.Invoke(handler, (object[])param);
             }
         }
 
-        internal object CreateParam(Stream param, Type paramType)
+        internal object CreateParam(Stream param)
         {
-            //Here we must do something smarter.. To match mimetype -> serializer
-            var ret = CreateTypedParam.Invoke(container.Serializers.First(), new object[] { param,paramType  });
-            return ret;
+            switch (paramCount)
+            {
+                case 0:
+                    return null;
+                case 1:
+                    return CreateTypedParam.Invoke(serializer, new object[] { param, ParamType });
+                default:
+                    return CreateArrayOfTypedParam.Invoke(serializer, new object[] { param, MultiParamTypes });
+            }
         }
     }
 }

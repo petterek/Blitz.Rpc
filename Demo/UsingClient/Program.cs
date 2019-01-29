@@ -25,9 +25,12 @@ namespace UsingClient
                 var client = sp.GetService<Contract.IServiceOne>();
 
                 var res = client.ServiceMethod1(new Contract.ServiceMethod1Param { NumberOfTasks = 25 });
+                var res2 = client.ServiceMethod2(new Contract.ServiceMethod2Param1 { Value = 10 }, new Contract.ServiceMethod2Param2 { Value = 10 });
+                var res3 = client.ServiceMethod2(3, 4);
 
-
-                Console.WriteLine(res.Completed);
+                Console.WriteLine($"Number1 = {res.Completed == 24}" );
+                Console.WriteLine($"Number2 = {res2.Completed == 20}");
+                Console.WriteLine($"Number3 = {res3.Completed == 12}");
             }
 
 

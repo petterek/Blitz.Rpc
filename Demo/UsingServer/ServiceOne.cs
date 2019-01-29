@@ -8,6 +8,16 @@ namespace UsingServer
         {
             return new ResultData { Completed = param.NumberOfTasks - 1 };
         }
+
+        public ResultData ServiceMethod2(ServiceMethod2Param1 param1, ServiceMethod2Param2 param2)
+        {
+            return new ResultData { Completed = param1.Value + param2.Value };
+        }
+
+        public ResultData ServiceMethod2(int param1, int param2)
+        {
+            return new ResultData { Completed = param2 * param1 };
+        }
     }
 
 
