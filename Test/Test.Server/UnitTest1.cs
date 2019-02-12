@@ -17,10 +17,10 @@ namespace Test.Server
             var serverInfo = new Blitz.Rpc.HttpServer.ServerInfo(new MySerializer());
             serverInfo.AddService(typeof(IServiceInterface));
 
-            Assert.IsNotNull(serverInfo.Services["Test.Server.IServiceInterface".ToLower()].MethodSignatures["Test.Server.IServiceInterface.Method1-Test.Server.Method1Param".ToLower()]);
-            Assert.IsNotNull(serverInfo.Services["Test.Server.IServiceInterface".ToLower()].MethodSignatures["Test.Server.IServiceInterface.Method2-Test.Server.Method2Param1-Test.Server.Method2Param2".ToLower()]);
-            Assert.IsNotNull(serverInfo.Services["Test.Server.IServiceInterface".ToLower()].MethodSignatures["Test.Server.IServiceInterface.Method3-System.String-System.Int32".ToLower()]);
-            Assert.IsNotNull(serverInfo.Services["Test.Server.IServiceInterface".ToLower()].MethodSignatures["Test.Server.IServiceInterface.Method4-".ToLower()]);
+            Assert.IsNotNull(serverInfo.Services[0].MethodSignatures["Test.Server.IServiceInterface.Method1-Test.Server.Method1Param".ToLower()]);
+            Assert.IsNotNull(serverInfo.Services[0].MethodSignatures["Test.Server.IServiceInterface.Method2-Test.Server.Method2Param1-Test.Server.Method2Param2".ToLower()]);
+            Assert.IsNotNull(serverInfo.Services[0].MethodSignatures["Test.Server.IServiceInterface.Method3-System.String-System.Int32".ToLower()]);
+            Assert.IsNotNull(serverInfo.Services[0].MethodSignatures["Test.Server.IServiceInterface.Method4-".ToLower()]);
 
         }
 

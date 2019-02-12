@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Blitz.Rpc.HttpServer.Internals
@@ -17,7 +18,7 @@ namespace Blitz.Rpc.HttpServer.Internals
 
 
 
-        
+
         internal void ValidateRequest(HandlerInfo hInfo)
         {
         }
@@ -31,7 +32,7 @@ namespace Blitz.Rpc.HttpServer.Internals
                 {
                     if (!handlerCache.ContainsKey(key))
                     {
-                        createHandler(key);
+                        if (!createHandler(key)) return null;
                     }
                 }
             }
@@ -47,12 +48,22 @@ namespace Blitz.Rpc.HttpServer.Internals
 
 
 
-        private void createHandler(string key)
+        private bool createHandler(string key)
         {
-            var regInfo = Container.Services[GetServiceName(key)];
-            var method = regInfo.MethodSignatures[key];
-            var handlerInfo = new HandlerInfo(Container.Serializer, method.Service, method.Method);
-            handlerCache[key] = handlerInfo;
+            try
+            {
+                string serviceName = GetServiceName(key);
+                var regInfo = Container.Services.FirstOrDefault(s => s.ServiceName.ToLower() == serviceName.ToLower());
+                var method = regInfo.MethodSignatures[key];
+                var handlerInfo = new HandlerInfo(Container.Serializer, method.Service, method.Method);
+                handlerCache[key] = handlerInfo;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
         }
     }
 }
