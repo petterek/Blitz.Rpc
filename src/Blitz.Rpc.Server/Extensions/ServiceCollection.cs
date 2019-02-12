@@ -1,5 +1,6 @@
 
 using Blitz.Rpc.HttpServer.Documentation;
+using Blitz.Rpc.Shared;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,7 @@ namespace Blitz.Rpc.HttpServer.Extensions
         {
             var ret = new ServerInfo(container.Serializer);
 
+            container.RegisterService<IPingPong, PingPong>();
             
             foreach (var kv in container.ServiceList)
             {
