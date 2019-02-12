@@ -1,4 +1,8 @@
 
+using Blitz.Rpc.HttpServer.Documentation;
+using Blitz.Rpc.Shared;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
@@ -9,33 +13,40 @@ namespace Blitz.Rpc.HttpServer.Extensions
     {
 
 
-        public static IServiceCollection AddWebRpcServices(this IServiceCollection services, Action<ServerConfig> config)
+        public static ServerInfoHolder AddWebRpcServices(this IServiceCollection services, Action<ServerConfig> config)
         {
             var configHolder = new ServerInfoHolder();
             services.TryAddSingleton(configHolder);
-            
+
             var configuration = new ServerConfig();
             config(configuration);
-                       
+
             RegisterServicesInContainer(services, configuration);
 
             //Create the container from the configuration.. 
-            configHolder.Add( CreateServerInfo(configuration));
-            
-            return services;
+            configHolder.Add(CreateServerInfo(configuration));
+
+            //Adding support for OpenApiDoc
+            services.TryAddSingleton<IApiDescriptionGroupCollectionProvider, ApiDescriptorGroupCollectionProvider>();
+            services.TryAddSingleton<IActionDescriptorCollectionProvider, ApiDescriptorCollectionProvider>();
+            services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, ApiDescriptionProvider>());
+
+            return configHolder;
         }
 
         private static ServerInfo CreateServerInfo(ServerConfig container)
         {
             var ret = new ServerInfo(container.Serializer);
 
-            foreach(var kv in container.ServiceList)
+            container.RegisterService<IPingPong, PingPong>();
+            
+            foreach (var kv in container.ServiceList)
             {
                 ret.AddService(kv.Key);
             }
-            
+
             ret.BasePath = container.BasePath;
-            
+
             return ret;
         }
 
@@ -49,6 +60,6 @@ namespace Blitz.Rpc.HttpServer.Extensions
                 }
             }
         }
-                
+
     }
 }

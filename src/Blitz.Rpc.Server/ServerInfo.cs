@@ -26,7 +26,7 @@ namespace Blitz.Rpc.HttpServer
 
         public string BasePath { get; set; }
         public ISerializer Serializer { get; set; } 
-        public Dictionary<string,RegistrationInfo> Services { get; } = new Dictionary<string, RegistrationInfo>();
+        public List<RegistrationInfo> Services { get; } = new List< RegistrationInfo>();
 
         public List<Type> PreMiddleware { get; } = new List<Type>();
 
@@ -41,7 +41,7 @@ namespace Blitz.Rpc.HttpServer
         }
         public void AddService(Type service)
         {
-            Services.Add(service.FullName.ToLower(), new RegistrationInfo(service));
+            Services.Add(new RegistrationInfo(service));
         }
     }
 }

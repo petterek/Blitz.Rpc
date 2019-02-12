@@ -13,4 +13,22 @@ namespace Blitz.Rpc.Shared
         object FromStream(Stream stream, Type returnType);
         object[]FromStream(Stream stream, Type[] returnType);
     }
+
+    public interface IPingPong
+    {
+        Pong Ping();
+    }
+
+    public class Pong
+    {
+        public DateTime ServerTime;
+    }
+
+    public class PingPong : IPingPong
+    {
+        public Pong Ping()
+        {
+            return new Pong { ServerTime = DateTime.Now };
+        }
+    }
 }

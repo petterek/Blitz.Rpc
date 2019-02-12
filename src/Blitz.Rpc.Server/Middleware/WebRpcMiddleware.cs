@@ -1,10 +1,8 @@
-using Blitz.Rpc.HttpServer.Exceptions;
 using Blitz.Rpc.HttpServer.Internals;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Blitz.Rpc.HttpServer.Middleware
@@ -29,24 +27,13 @@ namespace Blitz.Rpc.HttpServer.Middleware
         {
             var t = new Internals.TimerFunc.InternalTimer();
             string Identifier = context.Request.Path.ToUriComponent().Replace(_container.BasePath, "");
-            
 
-            if (Identifier == "" | context.Request.Method == "GET")
+            var hInfo = AppState.GetHandler(Identifier);
+
+            if (hInfo == null)
             {
                 await _next.Invoke(context);
                 return;
-            }
-
-            HandlerInfo hInfo;
-            try
-            {
-                hInfo = AppState.GetHandler(Identifier);
-            }
-            catch (Exception ex)
-            {
-                //Just swollow the body to avoid errors in server...
-                new System.IO.StreamReader(context.Request.Body).ReadToEnd();
-                throw new UnableToGetHandlerException(Identifier);
             }
 
             AppState.ValidateRequest(hInfo); //Throw if not valid.
@@ -71,7 +58,6 @@ namespace Blitz.Rpc.HttpServer.Middleware
             context.Response.ContentType = outStream.ProduceMimeType;
             context.Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
             outStream.ToStream(context.Response.Body, data);
-            
         }
     }
 }

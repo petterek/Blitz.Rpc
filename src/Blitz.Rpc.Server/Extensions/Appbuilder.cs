@@ -27,9 +27,16 @@ namespace Blitz.Rpc.HttpServer.Extensions
                     {
                         b.UseMiddleware<ErrorHandlerMiddleWare>(container);
                         b.UseMiddleware<WebRpcMiddleware>(container);
-                        b.UseMiddleware<ListSupportedInterfaces>(container);
                     });
             }
+            return builder;
+        }
+
+        public static IApplicationBuilder UseListEndpoints(this IApplicationBuilder builder)
+        {
+
+            builder.MapWhen(ctx => ctx.Request.Method == "GET", app => app.UseMiddleware<ListSupportedInterfaces>());
+
             return builder;
         }
     }
