@@ -47,7 +47,7 @@ namespace Blitz.Rpc.HttpServer.Middleware
                     throw new ArgumentOutOfRangeException(hInfo.ParamType.Name, $"Not able to create param of '{hInfo.ParamType.Name}' from string: '{context.Request.Body}'");
                 }
             }
-            var sw = new Stopwatch();
+            
             logger.LogTrace("Start handler {handler}", hInfo.HandlerType.FullName);
             var data = hInfo.Execute(param, serviceProvider);
             logger.LogTrace("End handler {handler}", hInfo.HandlerType.FullName);

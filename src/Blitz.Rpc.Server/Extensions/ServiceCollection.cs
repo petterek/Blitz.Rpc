@@ -21,6 +21,7 @@ namespace Blitz.Rpc.HttpServer.Extensions
             var configuration = new ServerConfig();
             config(configuration);
 
+            configuration.RegisterService<IPingPong, PingPong>();
             RegisterServicesInContainer(services, configuration);
 
             //Create the container from the configuration.. 
@@ -38,7 +39,7 @@ namespace Blitz.Rpc.HttpServer.Extensions
         {
             var ret = new ServerInfo(container.Serializer);
 
-            container.RegisterService<IPingPong, PingPong>();
+            
             
             foreach (var kv in container.ServiceList)
             {
