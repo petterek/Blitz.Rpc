@@ -24,39 +24,40 @@ namespace Blitz.Rpc.HttpServer.Extensions
 
             //Create the container from the configuration.. 
             configHolder.Add(CreateServerInfo(configuration));
-            
+
             //Adding support for OpenApiDoc
-            services.TryAddSingleton<IApiDescriptionGroupCollectionProvider,ApiDescriptorGroupCollectionProvider >();
+            services.TryAddSingleton<IApiDescriptionGroupCollectionProvider, ApiDescriptorGroupCollectionProvider>();
             services.TryAddSingleton<IActionDescriptorCollectionProvider, ApiDescriptorCollectionProvider>();
             services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, ApiDescriptionProvider>());
-        
+
             return configHolder;
         }
 
-    private static ServerInfo CreateServerInfo(ServerConfig container)
-    {
-        var ret = new ServerInfo(container.Serializer);
-
-        foreach (var kv in container.ServiceList)
+        private static ServerInfo CreateServerInfo(ServerConfig container)
         {
-            ret.AddService(kv.Key);
+            var ret = new ServerInfo(container.Serializer);
+
+            
+            foreach (var kv in container.ServiceList)
+            {
+                ret.AddService(kv.Key);
+            }
+
+            ret.BasePath = container.BasePath;
+
+            return ret;
         }
 
-        ret.BasePath = container.BasePath;
-
-        return ret;
-    }
-
-    private static void RegisterServicesInContainer(IServiceCollection services, ServerConfig config)
-    {
-        foreach (var val in config.ServiceList)
+        private static void RegisterServicesInContainer(IServiceCollection services, ServerConfig config)
         {
-            if (val.Value != null) //Register all services that has been provided with an implementation in the container, the service can be registered manually if you want that. 
+            foreach (var val in config.ServiceList)
             {
-                services.AddTransient(val.Key, val.Value);
+                if (val.Value != null) //Register all services that has been provided with an implementation in the container, the service can be registered manually if you want that. 
+                {
+                    services.AddTransient(val.Key, val.Value);
+                }
             }
         }
-    }
 
-}
+    }
 }
