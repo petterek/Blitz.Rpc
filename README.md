@@ -95,7 +95,12 @@ public class MySerializer : ISerializer
     {
         return serializer.Deserialize(new StreamReader(stream), returnType);
     }
-
+    
+    public object[] FromStream(Stream stream, Type[] returnType)
+    {
+            throw new NotImplementedException();
+    }
+    
     public void ToStream(Stream outstream, object v)
     {
         StreamWriter textWriter = new StreamWriter(outstream);
