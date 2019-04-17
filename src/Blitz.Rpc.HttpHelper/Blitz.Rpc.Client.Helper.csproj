@@ -5,17 +5,24 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <LangVersion>7.3</LangVersion>
-    <Version>2.0.0</Version>
+    <Version>2.0.1-alpha</Version>
     <RepositoryType>GIT</RepositoryType>
     <RepositoryUrl>https://github.com/petterek/Blitz.Rpc</RepositoryUrl>
     <PackageProjectUrl>https://github.com/petterek/Blitz.Rpc</PackageProjectUrl>
     <PackageTags>WebRpc dotnet</PackageTags>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath></OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="Blitz.Rpc.Client" Version="2.0.0" />
     <PackageReference Include="Blitz.Rpc.Shared" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Blitz.Rpc.Client\Blitz.Rpc.Client.csproj" />
   </ItemGroup>
 
 </Project>

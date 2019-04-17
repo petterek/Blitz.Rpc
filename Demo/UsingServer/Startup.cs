@@ -30,6 +30,7 @@ namespace UsingServer
             services.AddWebRpcServices((c) =>
                 {
                     c.RegisterService<IServiceOne, ServiceOne>();
+                    c.RegisterService<IAsyncService, AsyncService>();
                 });
 
             services.AddSwaggerGen(c => c.SwaggerDoc("api", new OpenApiInfo { Title = assemblyName.Name, Version = version }));

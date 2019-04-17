@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Blitz.Rpc.HttpServer.Internals
 {
@@ -11,13 +12,14 @@ namespace Blitz.Rpc.HttpServer.Internals
     {
         private MethodInfo CreateTypedParam;
         private MethodInfo CreateArrayOfTypedParam;
+        private PropertyInfo GetValuefromTaskProp;
         readonly ISerializer serializer;
         private int paramCount = 0;
 
         public HandlerInfo(ISerializer serializer, Type service, MethodInfo method)
         {
             this.serializer = serializer;
-            
+
             parameterInfo = method.GetParameters();
             paramCount = parameterInfo.Count();
             HandlerType = service;
@@ -39,6 +41,14 @@ namespace Blitz.Rpc.HttpServer.Internals
                     MultiParamTypes = parameterInfo.Select(el => el.ParameterType).ToArray();
                     break;
             }
+
+            if (typeof(Task).IsAssignableFrom(method.ReturnType))
+            {
+                if(method.ReturnType.IsGenericType)
+                {
+                    GetValuefromTaskProp = method.ReturnType.GetProperty("Result");
+                }
+            }
         }
 
         ParameterInfo[] parameterInfo;
@@ -47,20 +57,43 @@ namespace Blitz.Rpc.HttpServer.Internals
         public MethodInfo Method;
         public Type[] MultiParamTypes;
 
-        public object Execute(object param, IServiceProvider serviceProvider)
+        public async Task<object> Execute(object param, IServiceProvider serviceProvider)
         {
             var handler = serviceProvider.GetRequiredService(HandlerType);
             if (handler == null) throw new ArgumentNullException(HandlerType.FullName);
 
-            switch(paramCount)
+            object result;
+
+            switch (paramCount)
             {
                 case 0:
-                    return Method.Invoke(handler, new object[0]);
+                    result = Method.Invoke(handler, new object[0]);
+                    break;
                 case 1:
-                    return Method.Invoke(handler, new object[] { param });
+                    result = Method.Invoke(handler, new object[] { param });
+                    break;
                 default:
-                    return Method.Invoke(handler, (object[])param);
+                    result = Method.Invoke(handler, (object[])param);
+                    break;
             }
+
+            if (typeof(Task).IsAssignableFrom(result.GetType()))
+            {
+                await (Task)result;
+                return GetvalueFromTask((Task)result);
+            }
+
+            return result;
+
+        }
+
+        internal object GetvalueFromTask(Task theTask)
+        {
+            if (GetValuefromTaskProp != null)
+            {
+                return GetValuefromTaskProp.GetValue(theTask);
+            }
+            return null; //Task is a void.. 
         }
 
         internal object CreateParam(Stream param)

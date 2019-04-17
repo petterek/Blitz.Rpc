@@ -1,4 +1,5 @@
-﻿using Contract;
+﻿using System.Threading.Tasks;
+using Contract;
 
 namespace UsingServer
 {
@@ -20,5 +21,16 @@ namespace UsingServer
         }
     }
 
+
+
+    public class AsyncService : IAsyncService
+    {
+        public async Task<ResultData> Method1(ServiceMethod1Param param)
+        {
+
+            return await Task.FromResult(new ResultData {Completed=param.NumberOfTasks});
+
+        }
+    }
 
 }

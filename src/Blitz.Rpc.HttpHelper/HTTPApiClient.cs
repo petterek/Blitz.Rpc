@@ -64,7 +64,7 @@ namespace Blitz.Rpc.Client.Helper
 
             if (response.IsSuccessStatusCode)
             {
-                if (toCall.ReturnType == typeof(void)) return null;
+                if (toCall.ReturnType == typeof(void) | toCall.ReturnType == typeof(Task)) return null;
                 var ret = theSerializer.FromStream(await response.Content.ReadAsStreamAsync(), toCall.ReturnType);
 
                 return ret;

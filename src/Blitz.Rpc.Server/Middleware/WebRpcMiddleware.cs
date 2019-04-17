@@ -49,15 +49,18 @@ namespace Blitz.Rpc.HttpServer.Middleware
             }
             var sw = new Stopwatch();
             logger.LogTrace("Start handler {handler}", hInfo.HandlerType.FullName);
-            var data = hInfo.Execute(param, serviceProvider);
+
+            var data = await hInfo.Execute(param, serviceProvider);
+                                            
+
             logger.LogTrace("End handler {handler}", hInfo.HandlerType.FullName);
 
-            var outStream = AppState.Container.Serializer;
+            var serializer = AppState.Container.Serializer;
 
             context.Response.Headers.Add("X-ExecutionTimeInNanoSecond", new Microsoft.Extensions.Primitives.StringValues(t.Elapsed().ToString()));
-            context.Response.ContentType = outStream.ProduceMimeType;
+            context.Response.ContentType = serializer.ProduceMimeType;
             context.Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
-            outStream.ToStream(context.Response.Body, data);
+            serializer.ToStream(context.Response.Body, data);
         }
     }
 }

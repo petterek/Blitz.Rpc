@@ -1,4 +1,6 @@
-﻿namespace Contract
+﻿using System.Threading.Tasks;
+
+namespace Contract
 {
     public interface IServiceOne
     {
@@ -6,6 +8,14 @@
         ResultData ServiceMethod2(ServiceMethod2Param1 param1, ServiceMethod2Param2 param2);
         ResultData ServiceMethod2(int param1, int param2);
     }
+
+
+    public interface IAsyncService
+    {
+        Task<ResultData> Method1(ServiceMethod1Param param);
+    }
+
+
 
     public class ServiceMethod2Param2
     {
