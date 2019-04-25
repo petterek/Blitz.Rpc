@@ -97,9 +97,20 @@ public class MySerializer : ISerializer
         return serializer.Deserialize(new StreamReader(stream), returnType);
     }
     
-    public object[] FromStream(Stream stream, Type[] returnType)
+    public object[] FromStream(Stream stream, Type[] returnType) //multiparam.. 
     {
-            throw new NotImplementedException();
+           var data = JToken.Load(new JsonTextReader(new StreamReader(stream)));
+            if (!(data is JArray))
+            {
+                throw new Exception();
+            }
+            var list = new List<object>();
+            int i = 0;
+            foreach (var item in data as JArray)
+            {
+                list.Add(item.ToObject(returnType[i++]));
+            }
+            return list.ToArray();
     }
     
     public void ToStream(Stream outstream, object v)
