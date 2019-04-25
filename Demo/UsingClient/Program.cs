@@ -8,6 +8,8 @@ namespace UsingClient
 {
     class Program
     {
+        private const string V = "Should be visisble";
+
         static async Task Main(string[] args)
         {
 
@@ -35,6 +37,35 @@ namespace UsingClient
                 var res2 = await asyncService.Method1(new Contract.ServiceMethod1Param { NumberOfTasks = 10 });
 
                 Console.WriteLine($"Result2 = {res2.Completed == 10}");
+
+
+                try
+                {
+                    var res3 = await asyncService.AsyncMethodThatThrowsKnownException(new Contract.ExceptionParam { ExceptionMessage = V });
+                }
+
+                catch(Contract.ExceptionInContractProjectExcption ex)
+                {
+                    Console.WriteLine($"Correct exception is recieved: {ex.GetType().FullName}");
+                }
+
+                catch(Exception ex)
+                {
+                    Console.WriteLine(V == ex.Message);
+                    Console.WriteLine(ex.Message);
+                }
+
+
+                try
+                {
+                    var res4 = await asyncService.AsyncMethodThatThrowsUnknownException(new Contract.ExceptionParam { ExceptionMessage = V });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(V == ex.Message);
+                    Console.WriteLine(ex.Message);
+                }
+
 
             }
 

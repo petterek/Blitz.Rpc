@@ -24,7 +24,17 @@ namespace UsingServer
 
 
     public class AsyncService : IAsyncService
-    {
+    {        
+        public Task<ResultData> AsyncMethodThatThrowsKnownException(ExceptionParam param)
+        {
+            throw new ExceptionInContractProjectExcption(param.ExceptionMessage);
+        }
+
+        public Task<ResultData> AsyncMethodThatThrowsUnknownException(ExceptionParam param)
+        {
+            throw new UnknownException(param.ExceptionMessage);
+        }
+
         public async Task<ResultData> Method1(ServiceMethod1Param param)
         {
 
@@ -32,5 +42,4 @@ namespace UsingServer
 
         }
     }
-
 }

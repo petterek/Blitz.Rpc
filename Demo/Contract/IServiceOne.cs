@@ -13,9 +13,15 @@ namespace Contract
     public interface IAsyncService
     {
         Task<ResultData> Method1(ServiceMethod1Param param);
+        Task<ResultData> AsyncMethodThatThrowsKnownException(ExceptionParam param);
+        Task<ResultData> AsyncMethodThatThrowsUnknownException(ExceptionParam param);
     }
 
-
+    public class ExceptionParam
+    {
+        public string ExceptionMessage;
+    }
+    
 
     public class ServiceMethod2Param2
     {
@@ -26,4 +32,7 @@ namespace Contract
     {
         public int Value;
     }
+
+
+
 }

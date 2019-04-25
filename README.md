@@ -68,7 +68,8 @@ public class Startup
     }
 ```
 
-The interface IServiceOne is declared in a seperate project, and the idea is to share this contract thorugh nuget. 
+The interface IServiceOne is declared in a seperate project, and the idea is to share this contract through nuget. 
+
 The serializer in both projects are declared as Interfaces to avoid dependencies against other nuget packages. 
 
 ### Implementation of serializer using Newtosoft Json could look like this. 
@@ -109,3 +110,16 @@ public class MySerializer : ISerializer
     }
 }
 ```
+
+## Exception handling
+When an exception is thrown on the server the status code of the response is set to 500 and the info about the exception is serialized to the response. 
+
+If the exception is known on the client side it's rethrown. Containing the message from the server. 
+
+Probably more to be done here, but ...
+
+* [ ] Fix things in exception handling
+* [ ] Log exceptions on both side
+* [ ] ~TBA~
+
+

@@ -52,9 +52,13 @@ namespace Blitz.Rpc.HttpServer.Middleware
 
         private async Task WriteRpcExceptionToResponse(HttpContext context, WebRpcCallFailedException rpcException)
         {
-            Guid guid = Guid.Empty;
+            Guid guid;
             Guid.TryParse(context.Request.Headers[HeaderNames.Tracking], out guid);
-            Guid.TryParse(context.Request.Headers[HeaderNames.Corrolation], out guid);
+
+            if(guid == Guid.Empty)
+            {
+                Guid.TryParse(context.Request.Headers[HeaderNames.Corrolation], out guid);
+            }
 
             var envelope = new RemoteExceptionInfo()
             {
@@ -74,15 +78,19 @@ namespace Blitz.Rpc.HttpServer.Middleware
 
         private async Task WriteExceptionToResponse(HttpContext context, Exception ex)
         {
-            Guid guid = Guid.Empty;
+            Guid guid;
             Guid.TryParse(context.Request.Headers[HeaderNames.Tracking], out guid);
-            Guid.TryParse(context.Request.Headers[HeaderNames.Corrolation], out guid);
+
+            if (guid == Guid.Empty)
+            {
+                Guid.TryParse(context.Request.Headers[HeaderNames.Corrolation], out guid);
+            }
 
             var envelope = new RemoteExceptionInfo
             {
                 CorrelationId = guid,
                 Message = ex.Message,
-                Type = ex.GetType().FullName,
+                Type = ex.GetType().AssemblyQualifiedName,
                 StackTrace = ex.StackTrace,
                 Source = ex.Source,
                 ExceptionId = Guid.NewGuid(),
@@ -108,26 +116,26 @@ namespace Blitz.Rpc.HttpServer.Middleware
             return context.Response.Body.FlushAsync();
         }
 
-        private class RemoteExceptionWrapper : Exception
-        {
-            private readonly RemoteExceptionInfo remoteInfo;
+        //private class RemoteExceptionWrapper : Exception
+        //{
+        //    private readonly RemoteExceptionInfo remoteInfo;
 
-            public RemoteExceptionWrapper(RemoteExceptionInfo remoteInfo) : base($"Exception occured on {remoteInfo.MachineName} - {remoteInfo.ExceptionId}")
-            {
-                this.remoteInfo = remoteInfo;
-                this.Source = remoteInfo.Source;
+        //    public RemoteExceptionWrapper(RemoteExceptionInfo remoteInfo) : base($"Exception occured on {remoteInfo.MachineName} - {remoteInfo.ExceptionId}")
+        //    {
+        //        this.remoteInfo = remoteInfo;
+        //        this.Source = remoteInfo.Source;
 
-                this.Data.Add("Id", remoteInfo.ExceptionId);
-                this.Data.Add("InnerType", remoteInfo.Type);
-            }
+        //        this.Data.Add("Id", remoteInfo.ExceptionId);
+        //        this.Data.Add("InnerType", remoteInfo.Type);
+        //    }
 
-            public override string StackTrace
-            {
-                get
-                {
-                    return remoteInfo.StackTrace;
-                }
-            }
-        }
+        //    public override string StackTrace
+        //    {
+        //        get
+        //        {
+        //            return remoteInfo.StackTrace;
+        //        }
+        //    }
+        //}
     }
 }
