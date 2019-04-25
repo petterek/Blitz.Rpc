@@ -5,16 +5,13 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <LangVersion>7.3</LangVersion>
-    <Version>2.0.2-pre</Version>
+    <Version>2.0.2</Version>
     <Authors>PEtter Ekrann</Authors>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blitz.Rpc.Shared" Version="2.0.1" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Blitz.Rpc.Shared\Blitz.Rpc.Shared.csproj" />
   </ItemGroup>
 
 </Project>
